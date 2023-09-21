@@ -1,2 +1,3 @@
-# Nex Pictora Backend (Go Lang Specific)
+# Nex Pictora Backend
+## Code Name: CTT-Back
 
