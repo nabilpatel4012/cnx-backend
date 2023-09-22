@@ -1,0 +1,64 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+Project CTT_Back {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Nex Pictora Backend
+    This is the backend database design and architecture of Nex Pictora Pvt. Ltd©
+  '''
+}
+
+Table users as USR {
+  user_id serial [pk, unique, not null, note: 'this will consist of unique user_id']
+  name varchar [not null]
+  email varchar [unique, not null]
+  phone varchar [not null]
+  address varchar [not null, default: `now()`]
+  total_orders int [not null, default: 0]
+  created_at timestamptz [not null, default: `now()`]
+  Indexes{
+    user_id
+    name
+    email
+  }
+}
+
+Table services as SVS {
+    service_id serial [pk, not null]
+    service_name varchar [unique, not null]
+    service_price bigint [not null]
+}
+Table orders as ORDR {
+  order_id serial [pk, unique, not null]
+  customer_id serial [ref: > USR.user_id, not null]
+  service_id serial [ref: > SVS.service_id, not null]
+  order_status varchar [not null]
+  order_started timestamptz [not null, default: `now()`]
+  order_delivered timestamptz
+//   account_id bigint [ref: > A.id,  not null]
+//   amount bigint [not null,note:'can be negative or positive']
+//   created_at timestamptz [not null, default: `now()`]
+  Indexes {
+    order_id
+    order_status
+    (order_started, order_status)
+  }
+}
+// Table assigns as ASGN {
+//     id bigserial [pk]
+
+// }
+// Table transfers {
+//   id bigserial [pk]
+//   from_account_id bigint [ref: > A.id, not null]
+//   to_account_id bigint [ref: > A.id, not null]
+//   amount bigint [not null, note:'must be positive']
+//   created_at timestamptz [not null, default: `now()`]
+//   Indexes {
+//     from_account_id
+//     to_account_id
+//     (from_account_id, to_account_id)
+//   }
+// }
+
+
