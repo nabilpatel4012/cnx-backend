@@ -47,6 +47,15 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users WHERE user_id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, userID)
+	return err
+}
+
 const getUser = `-- name: GetUser :one
 SELECT user_id, name, email, phone, address, total_orders, created_at FROM users
 WHERE user_id = $1 LIMIT 1
@@ -108,4 +117,33 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateUser = `-- name: UpdateUser :one
+UPDATE users 
+SET email = $2,
+address = $3
+WHERE user_id = $1
+RETURNING user_id, name, email, phone, address, total_orders, created_at
+`
+
+type UpdateUserParams struct {
+	UserID  int32  `json:"user_id"`
+	Email   string `json:"email"`
+	Address string `json:"address"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUser, arg.UserID, arg.Email, arg.Address)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.Name,
+		&i.Email,
+		&i.Phone,
+		&i.Address,
+		&i.TotalOrders,
+		&i.CreatedAt,
+	)
+	return i, err
 }
