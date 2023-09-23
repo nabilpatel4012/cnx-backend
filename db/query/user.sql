@@ -21,7 +21,9 @@ OFFSET $2;
 -- name: UpdateUser :one
 UPDATE users 
 SET email = $2,
-address = $3
+address = $3,
+phone = $4,
+total_orders = $5
 WHERE user_id = $1
 RETURNING *;
 

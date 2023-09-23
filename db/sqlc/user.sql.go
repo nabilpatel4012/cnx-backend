@@ -122,19 +122,29 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 const updateUser = `-- name: UpdateUser :one
 UPDATE users 
 SET email = $2,
-address = $3
+address = $3,
+phone = $4,
+total_orders = $5
 WHERE user_id = $1
 RETURNING user_id, name, email, phone, address, total_orders, created_at
 `
 
 type UpdateUserParams struct {
-	UserID  int32  `json:"user_id"`
-	Email   string `json:"email"`
-	Address string `json:"address"`
+	UserID      int32  `json:"user_id"`
+	Email       string `json:"email"`
+	Address     string `json:"address"`
+	Phone       string `json:"phone"`
+	TotalOrders int32  `json:"total_orders"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUser, arg.UserID, arg.Email, arg.Address)
+	row := q.db.QueryRowContext(ctx, updateUser,
+		arg.UserID,
+		arg.Email,
+		arg.Address,
+		arg.Phone,
+		arg.TotalOrders,
+	)
 	var i User
 	err := row.Scan(
 		&i.UserID,

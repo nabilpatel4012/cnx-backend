@@ -42,3 +42,7 @@ func RandomEmail() string {
 func RandomAddress() string {
 	return randomdata.Address()
 }
+
+func RandomOrder() int {
+	return randomdata.Number(20)
+}
