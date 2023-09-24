@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -73,5 +74,40 @@ func TestUpdateUser(t *testing.T) {
 	require.Equal(t, user1.Address, res.Address)
 	require.Equal(t, arg.TotalOrders, res.TotalOrders)
 	require.WithinDuration(t, user1.CreatedAt, res.CreatedAt, time.Second)
+
+}
+
+func TestDeleteUser(t *testing.T) {
+	user1 := createRandomUser(t)
+
+	err := testQueries.DeleteUser(context.Background(), user1.UserID)
+
+	require.NoError(t, err)
+
+	res, err := testQueries.GetUser(context.Background(), user1.UserID)
+	require.Error(t, err)
+	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.Empty(t, res)
+}
+
+func TestListUsers(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		createRandomUser(t)
+	}
+
+	arg := ListUsersParams{
+		Limit:  5,
+		Offset: 5,
+	}
+
+	res, err := testQueries.ListUsers(context.Background(), arg)
+	require.NoError(t, err)
+	// Here we are checking whether the t object, the res i.e response have a length of 5
+	require.Len(t, res, 5)
+
+	//Here we are checking that each account is empty or not, this will ensure that we have got proper data back.
+	for _, user := range res {
+		require.NotEmpty(t, user)
+	}
 
 }
