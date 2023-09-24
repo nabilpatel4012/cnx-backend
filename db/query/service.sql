@@ -26,3 +26,6 @@ SET service_name = $2,
 service_price = $3
 WHERE service_id = $1
 RETURNING *;
+
+-- name: DeleteService :exec
+DELETE FROM services WHERE service_id = $1;
