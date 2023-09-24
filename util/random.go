@@ -44,8 +44,29 @@ func RandomAddress() string {
 }
 
 func RandomOrder() int {
-	return randomdata.Number(20)
+	return randomdata.Number(1, 20)
 }
 func RandomPrice() int {
 	return randomdata.Number(100, 1000)
+}
+
+func RandomDeliveryTime() time.Time {
+
+	// Set a time range (adjust as needed)
+	minTime := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
+	maxTime := time.Date(2023, 12, 31, 23, 59, 59, 999999999, time.UTC)
+
+	// Generate a random duration within the time range
+	timeRange := maxTime.Sub(minTime)
+	randomDuration := time.Duration(rand.Int63n(int64(timeRange)))
+
+	// Add the random duration to the minimum time to get a random delivery time
+	randomDeliveryTime := minTime.Add(randomDuration)
+
+	return randomDeliveryTime
+
+}
+
+func RandomOrderStatus() string {
+	return randomdata.StringSample("Started", "Pending", "Accepted", "Work In Progress", "Done", "Delivered", "Cancelled")
 }
