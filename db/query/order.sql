@@ -17,3 +17,12 @@ SELECT * FROM orders
 ORDER BY order_id
 LIMIT $1
 OFFSET $2;
+
+-- name: UpdateOrder :one
+UPDATE orders 
+SET order_status = $2
+WHERE order_id = $1
+RETURNING *;
+
+-- name: DeleteOrder :exec
+DELETE FROM orders WHERE order_id = $1;

@@ -47,6 +47,15 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order
 	return i, err
 }
 
+const deleteOrder = `-- name: DeleteOrder :exec
+DELETE FROM orders WHERE order_id = $1
+`
+
+func (q *Queries) DeleteOrder(ctx context.Context, orderID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteOrder, orderID)
+	return err
+}
+
 const getOrder = `-- name: GetOrder :one
 SELECT order_id, customer_id, service_id, order_status, order_started, order_delivered FROM orders
 WHERE order_id = $1 LIMIT 1
@@ -106,4 +115,30 @@ func (q *Queries) ListOrders(ctx context.Context, arg ListOrdersParams) ([]Order
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateOrder = `-- name: UpdateOrder :one
+UPDATE orders 
+SET order_status = $2
+WHERE order_id = $1
+RETURNING order_id, customer_id, service_id, order_status, order_started, order_delivered
+`
+
+type UpdateOrderParams struct {
+	OrderID     int32  `json:"order_id"`
+	OrderStatus string `json:"order_status"`
+}
+
+func (q *Queries) UpdateOrder(ctx context.Context, arg UpdateOrderParams) (Order, error) {
+	row := q.db.QueryRowContext(ctx, updateOrder, arg.OrderID, arg.OrderStatus)
+	var i Order
+	err := row.Scan(
+		&i.OrderID,
+		&i.CustomerID,
+		&i.ServiceID,
+		&i.OrderStatus,
+		&i.OrderStarted,
+		&i.OrderDelivered,
+	)
+	return i, err
 }

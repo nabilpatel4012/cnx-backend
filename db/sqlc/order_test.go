@@ -57,6 +57,7 @@ func TestGetOrder(t *testing.T) {
 	require.Equal(t, order1.OrderID, res.OrderID)
 	require.Equal(t, order1.CustomerID, res.CustomerID)
 	require.Equal(t, order1.OrderStatus, res.OrderStatus)
+	require.Equal(t, order1.ServiceID, res.ServiceID)
 	require.NotEmpty(t, res.OrderStarted)
 	require.NotEmpty(t, res.OrderDelivered)
 }
@@ -80,4 +81,38 @@ func TestListOrders(t *testing.T) {
 	for _, order := range res {
 		require.NotEmpty(t, order)
 	}
+}
+
+func TestUpdateOrder(t *testing.T) {
+	order1 := createRandomOrder(t)
+
+	arg := UpdateOrderParams{
+		OrderID:     order1.OrderID,
+		OrderStatus: util.RandomOrderStatus(),
+	}
+	res, err := testQueries.UpdateOrder(context.Background(), arg)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, res)
+
+	require.Equal(t, order1.OrderID, res.OrderID)
+	require.Equal(t, arg.OrderStatus, res.OrderStatus)
+	require.Equal(t, order1.CustomerID, res.CustomerID)
+	require.Equal(t, order1.ServiceID, res.ServiceID)
+	require.WithinDuration(t, order1.OrderStarted, res.OrderStarted, time.Second)
+	require.NotEmpty(t, res.OrderDelivered)
+
+}
+
+func TestDeleteOrder(t *testing.T) {
+	order1 := createRandomOrder(t)
+
+	err := testQueries.DeleteOrder(context.Background(), order1.OrderID)
+
+	require.NoError(t, err)
+
+	res, err := testQueries.GetOrder(context.Background(), order1.OrderID)
+	require.Error(t, err)
+	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.Empty(t, res)
 }
