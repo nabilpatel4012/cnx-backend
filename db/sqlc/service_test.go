@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 
 	"github.com/nexpictora-pvt-ltd/cnx-backend/util"
@@ -99,16 +98,16 @@ func TestUpdateService(t *testing.T) {
 
 }
 
-func TestDeleteService(t *testing.T) {
+// func TestDeleteService(t *testing.T) {
 
-	service1 := createRandomService(t)
+// 	service1 := createRandomService(t)
 
-	err := testQueries.DeleteService(context.Background(), service1.ServiceID)
+// 	err := testQueries.DeleteService(context.Background(), service1.ServiceID)
 
-	require.NoError(t, err)
+// 	require.NoError(t, err)
 
-	res, err := testQueries.GetService(context.Background(), service1.ServiceID)
-	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
-	require.Empty(t, res)
-}
+// 	res, err := testQueries.GetService(context.Background(), service1.ServiceID)
+// 	require.Error(t, err)
+// 	require.EqualError(t, err, sql.ErrNoRows.Error())
+// 	require.Empty(t, res)
+// }

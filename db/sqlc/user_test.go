@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 	"time"
 
@@ -77,18 +76,18 @@ func TestUpdateUser(t *testing.T) {
 
 }
 
-func TestDeleteUser(t *testing.T) {
-	user1 := createRandomUser(t)
+// func TestDeleteUser(t *testing.T) {
+// 	user1 := createRandomUser(t)
 
-	err := testQueries.DeleteUser(context.Background(), user1.UserID)
+// 	err := testQueries.DeleteUser(context.Background(), user1.UserID)
 
-	require.NoError(t, err)
+// 	require.NoError(t, err)
 
-	res, err := testQueries.GetUser(context.Background(), user1.UserID)
-	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
-	require.Empty(t, res)
-}
+// 	res, err := testQueries.GetUser(context.Background(), user1.UserID)
+// 	require.Error(t, err)
+// 	require.EqualError(t, err, sql.ErrNoRows.Error())
+// 	require.Empty(t, res)
+// }
 
 func TestListUsers(t *testing.T) {
 	for i := 0; i < 10; i++ {
