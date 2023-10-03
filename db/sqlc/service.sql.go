@@ -62,7 +62,7 @@ func (q *Queries) ListAllServices(ctx context.Context) ([]Service, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Service
+	items := []Service{}
 	for rows.Next() {
 		var i Service
 		if err := rows.Scan(&i.ServiceID, &i.ServiceName, &i.ServicePrice); err != nil {
@@ -97,7 +97,7 @@ func (q *Queries) ListLimitedServices(ctx context.Context, arg ListLimitedServic
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Service
+	items := []Service{}
 	for rows.Next() {
 		var i Service
 		if err := rows.Scan(&i.ServiceID, &i.ServiceName, &i.ServicePrice); err != nil {

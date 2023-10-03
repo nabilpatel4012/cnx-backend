@@ -44,7 +44,7 @@ func RandomAddress() string {
 }
 
 func RandomOrder() int {
-	return randomdata.Number(1, 20)
+	return randomdata.Number(1, 3)
 }
 func RandomPrice() int {
 	return randomdata.Number(100, 1000)
