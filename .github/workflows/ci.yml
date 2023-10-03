@@ -21,7 +21,7 @@ jobs:
             POSTGRES_DB: ctt_test_001
         
         ports:
-          - 6969:5432
+          - 5432:6969
 
         options: >-
             --health-cmd pg_isready
