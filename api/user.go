@@ -3,16 +3,30 @@ package api
 import (
 	"database/sql"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	db "github.com/nexpictora-pvt-ltd/cnx-backend/db/sqlc"
+	"github.com/nexpictora-pvt-ltd/cnx-backend/util"
 )
 
 type createUserRequest struct {
-	Name    string `json:"name" binding:"required"`
-	Email   string `json:"email" binding:"required"`
-	Phone   string `json:"phone" binding:"required"`
-	Address string `json:"address" binding:"required"`
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Phone    string `json:"phone" binding:"required"`
+	Address  string `json:"address" binding:"required"`
+	Password string `json:"password" binding:"required,min=8"`
+}
+
+type createUserResponse struct {
+	UserID            int32     `json:"user_id"`
+	Name              string    `json:"name"`
+	Email             string    `json:"email"`
+	Phone             string    `json:"phone"`
+	Address           string    `json:"address"`
+	TotalOrders       int32     `json:"total_orders"`
+	CreatedAt         time.Time `json:"created_at"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
 }
 
 func (server *Server) createUser(ctx *gin.Context) {
@@ -21,11 +35,17 @@ func (server *Server) createUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+	hashedPassword, err := util.HashPassword(req.Password)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
 	arg := db.CreateUserParams{
-		Name:    req.Name,
-		Email:   req.Email,
-		Phone:   req.Phone,
-		Address: req.Address,
+		Name:           req.Name,
+		Email:          req.Email,
+		Phone:          req.Phone,
+		Address:        req.Address,
+		HashedPassword: hashedPassword,
 	}
 
 	user, err := server.store.CreateUser(ctx, arg)
@@ -33,7 +53,17 @@ func (server *Server) createUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+
+	res := createUserResponse{
+		UserID:            user.UserID,
+		Name:              user.Name,
+		Email:             user.Email,
+		Phone:             user.Phone,
+		Address:           user.Address,
+		PasswordChangedAt: user.PasswordChangedAt,
+		CreatedAt:         user.CreatedAt,
+	}
+	ctx.JSON(http.StatusOK, res)
 }
 
 type getUserRequest struct {
