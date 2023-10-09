@@ -3,8 +3,9 @@ CREATE TABLE "users" (
   "name" varchar NOT NULL,
   "email" varchar UNIQUE NOT NULL,
   "phone" varchar NOT NULL,
-  "address" varchar NOT NULL DEFAULT (now()),
+  "address" varchar NOT NULL,
   "total_orders" int NOT NULL DEFAULT 0,
+  "hashed_password" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
@@ -40,3 +41,6 @@ COMMENT ON COLUMN "users"."user_id" IS 'this will consist of unique user_id';
 ALTER TABLE "orders" ADD FOREIGN KEY ("customer_id") REFERENCES "users" ("user_id");
 
 ALTER TABLE "orders" ADD FOREIGN KEY ("service_id") REFERENCES "services" ("service_id");
+
+-- Set the starting value of the user_id sequence to 10000
+SELECT setval('users_user_id_seq', 10000);

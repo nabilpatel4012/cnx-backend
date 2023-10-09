@@ -14,17 +14,19 @@ INSERT INTO users (
   name,
   email,
   phone,
-  address 
+  address,
+  hashed_password 
 ) VALUES (
-  $1, $2, $3, $4
-) RETURNING user_id, name, email, phone, address, total_orders, created_at
+  $1, $2, $3, $4, $5
+) RETURNING user_id, name, email, phone, address, total_orders, hashed_password, created_at, password_changed_at
 `
 
 type CreateUserParams struct {
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	Phone   string `json:"phone"`
-	Address string `json:"address"`
+	Name           string `json:"name"`
+	Email          string `json:"email"`
+	Phone          string `json:"phone"`
+	Address        string `json:"address"`
+	HashedPassword string `json:"hashed_password"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -33,6 +35,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Email,
 		arg.Phone,
 		arg.Address,
+		arg.HashedPassword,
 	)
 	var i User
 	err := row.Scan(
@@ -42,7 +45,9 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Phone,
 		&i.Address,
 		&i.TotalOrders,
+		&i.HashedPassword,
 		&i.CreatedAt,
+		&i.PasswordChangedAt,
 	)
 	return i, err
 }
@@ -57,7 +62,7 @@ func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT user_id, name, email, phone, address, total_orders, created_at FROM users
+SELECT user_id, name, email, phone, address, total_orders, hashed_password, created_at, password_changed_at FROM users
 WHERE user_id = $1 LIMIT 1
 `
 
@@ -71,13 +76,15 @@ func (q *Queries) GetUser(ctx context.Context, userID int32) (User, error) {
 		&i.Phone,
 		&i.Address,
 		&i.TotalOrders,
+		&i.HashedPassword,
 		&i.CreatedAt,
+		&i.PasswordChangedAt,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT user_id, name, email, phone, address, total_orders, created_at FROM users
+SELECT user_id, name, email, phone, address, total_orders, hashed_password, created_at, password_changed_at FROM users
 ORDER BY user_id
 LIMIT $1
 OFFSET $2
@@ -104,7 +111,9 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.Phone,
 			&i.Address,
 			&i.TotalOrders,
+			&i.HashedPassword,
 			&i.CreatedAt,
+			&i.PasswordChangedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -124,17 +133,19 @@ UPDATE users
 SET email = $2,
 address = $3,
 phone = $4,
-total_orders = $5
+total_orders = $5,
+hashed_password = $6
 WHERE user_id = $1
-RETURNING user_id, name, email, phone, address, total_orders, created_at
+RETURNING user_id, name, email, phone, address, total_orders, hashed_password, created_at, password_changed_at
 `
 
 type UpdateUserParams struct {
-	UserID      int32  `json:"user_id"`
-	Email       string `json:"email"`
-	Address     string `json:"address"`
-	Phone       string `json:"phone"`
-	TotalOrders int32  `json:"total_orders"`
+	UserID         int32  `json:"user_id"`
+	Email          string `json:"email"`
+	Address        string `json:"address"`
+	Phone          string `json:"phone"`
+	TotalOrders    int32  `json:"total_orders"`
+	HashedPassword string `json:"hashed_password"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
@@ -144,6 +155,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.Address,
 		arg.Phone,
 		arg.TotalOrders,
+		arg.HashedPassword,
 	)
 	var i User
 	err := row.Scan(
@@ -153,7 +165,9 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.Phone,
 		&i.Address,
 		&i.TotalOrders,
+		&i.HashedPassword,
 		&i.CreatedAt,
+		&i.PasswordChangedAt,
 	)
 	return i, err
 }

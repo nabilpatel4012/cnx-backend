@@ -3,9 +3,10 @@ INSERT INTO users (
   name,
   email,
   phone,
-  address 
+  address,
+  hashed_password 
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 ) RETURNING *;
 
 -- name: GetUser :one
@@ -23,7 +24,8 @@ UPDATE users
 SET email = $2,
 address = $3,
 phone = $4,
-total_orders = $5
+total_orders = $5,
+hashed_password = $6
 WHERE user_id = $1
 RETURNING *;
 

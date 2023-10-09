@@ -26,11 +26,13 @@ type Service struct {
 
 type User struct {
 	// this will consist of unique user_id
-	UserID      int32     `json:"user_id"`
-	Name        string    `json:"name"`
-	Email       string    `json:"email"`
-	Phone       string    `json:"phone"`
-	Address     string    `json:"address"`
-	TotalOrders int32     `json:"total_orders"`
-	CreatedAt   time.Time `json:"created_at"`
+	UserID            int32     `json:"user_id"`
+	Name              string    `json:"name"`
+	Email             string    `json:"email"`
+	Phone             string    `json:"phone"`
+	Address           string    `json:"address"`
+	TotalOrders       int32     `json:"total_orders"`
+	HashedPassword    string    `json:"hashed_password"`
+	CreatedAt         time.Time `json:"created_at"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
 }
