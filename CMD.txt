@@ -1,0 +1,2 @@
+TO RUN CNX-BACKEND CONTAINER
+docker run --name cnx-backend --network nex-network -p 8080:8080 -e DB_SOURCE="postgresql://root:secret@postgres16:5432/ctt_test_001?sslmode=disable" cnx-backend:latest
