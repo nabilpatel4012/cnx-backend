@@ -5,7 +5,7 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=ctt-test-001
+      - POSTGRES_DB=ctt_test_001
   api:
     build:
       context: .
@@ -13,7 +13,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_SOURCE=postgresql://root:secret@postgres:5432/ctt-test-001?sslmode=disable
+      - DB_SOURCE=postgresql://root:secret@postgres:5432/ctt_test_001?sslmode=disable
     depends_on:
       - postgres
     entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
