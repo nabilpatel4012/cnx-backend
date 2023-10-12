@@ -52,6 +52,12 @@ func (server *Server) setupRouter() {
 	authRoutes.GET("/services/:service_id", server.getService)
 	authRoutes.GET("/services", server.listServices)
 	authRoutes.PUT("/services/:service_id", server.updateService)
+	authRoutes.DELETE("/services/:service_id", server.deleteService)
+
+	authRoutes.POST("/orders", server.createOrder)
+	authRoutes.PUT("/orders", server.updateOrderStatus)
+	authRoutes.PUT("/orders/update", server.updateOrderDelivered)
+	authRoutes.GET("/orders/:order_id", server.getOrder)
 
 	server.router = router
 }

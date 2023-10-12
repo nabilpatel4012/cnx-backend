@@ -11,6 +11,7 @@ import (
 type createServiceRequest struct {
 	ServiceName  string `json:"service_name" binding:"required"`
 	ServicePrice int64  `json:"service_price" binding:"required"`
+	ServiceImage string `json:"service_image" binding:"required"`
 }
 
 func (server *Server) createService(ctx *gin.Context) {
@@ -22,6 +23,7 @@ func (server *Server) createService(ctx *gin.Context) {
 	arg := db.CreateServiceParams{
 		ServiceName:  req.ServiceName,
 		ServicePrice: req.ServicePrice,
+		ServiceImage: req.ServiceImage,
 	}
 
 	service, err := server.store.CreateService(ctx, arg)
@@ -83,6 +85,7 @@ type updateServiceRequest struct {
 	ServiceID    int64  `uri:"service_id" binding:"required,min=1"`
 	ServiceName  string `json:"service_name" binding:"required"`
 	ServicePrice int64  `json:"service_price" binding:"required"`
+	ServiceImage string `json:"service_image" binding:"required"`
 }
 
 func (server *Server) updateService(ctx *gin.Context) {
@@ -95,6 +98,7 @@ func (server *Server) updateService(ctx *gin.Context) {
 		ServiceID:    int32(req.ServiceID),
 		ServiceName:  req.ServiceName,
 		ServicePrice: req.ServicePrice,
+		ServiceImage: req.ServiceImage,
 	}
 
 	service, err := server.store.UpdateService(ctx, updateParams)
@@ -103,4 +107,22 @@ func (server *Server) updateService(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, service)
+}
+
+type deleteServiceRequest struct {
+	ServiceID int64 `uri:"service_id" binding:"required,min=1"`
+}
+
+func (server *Server) deleteService(ctx *gin.Context) {
+	var req deleteServiceRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	err := server.store.DeleteService(ctx, int32(req.ServiceID))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, "Service Deleted Successfully")
 }

@@ -33,5 +33,11 @@ hashed_password = $6
 WHERE user_id = $1
 RETURNING *;
 
+-- name: UpdateUserOrder :one
+UPDATE users 
+SET total_orders = $2
+WHERE user_id = $1
+RETURNING *;
+
 -- name: DeleteUser :exec
 DELETE FROM users WHERE user_id = $1;

@@ -16,12 +16,14 @@ CREATE TABLE "services" (
 );
 
 CREATE TABLE "orders" (
-  "order_id" serial UNIQUE PRIMARY KEY NOT NULL,
-  "customer_id" serial NOT NULL,
-  "service_id" serial NOT NULL,
+  "id" serial PRIMARY KEY NOT NULL,
+  "order_id" bigint NOT NULL,
+  "user_id" serial NOT NULL,
+  "service_ids" serial NOT NULL,
   "order_status" varchar NOT NULL,
   "order_started" timestamptz NOT NULL DEFAULT (now()),
-  "order_delivered" timestamptz
+  "order_delivered" boolean NOT NULL DEFAULT false,
+  "order_delivery_time" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE INDEX ON "users" ("user_id");
@@ -38,9 +40,9 @@ CREATE INDEX ON "orders" ("order_started", "order_status");
 
 COMMENT ON COLUMN "users"."user_id" IS 'this will consist of unique user_id';
 
-ALTER TABLE "orders" ADD FOREIGN KEY ("customer_id") REFERENCES "users" ("user_id");
+ALTER TABLE "orders" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
 
-ALTER TABLE "orders" ADD FOREIGN KEY ("service_id") REFERENCES "services" ("service_id");
+ALTER TABLE "orders" ADD FOREIGN KEY ("service_ids") REFERENCES "services" ("service_id");
 
 -- Set the starting value of the user_id sequence to 10000
 SELECT setval('users_user_id_seq', 10000);

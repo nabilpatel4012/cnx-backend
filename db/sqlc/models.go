@@ -5,23 +5,25 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
 type Order struct {
-	OrderID        int32        `json:"order_id"`
-	CustomerID     int32        `json:"customer_id"`
-	ServiceID      int32        `json:"service_id"`
-	OrderStatus    string       `json:"order_status"`
-	OrderStarted   time.Time    `json:"order_started"`
-	OrderDelivered sql.NullTime `json:"order_delivered"`
+	ID                int32     `json:"id"`
+	OrderID           int64     `json:"order_id"`
+	UserID            int32     `json:"user_id"`
+	ServiceIds        int32     `json:"service_ids"`
+	OrderStatus       string    `json:"order_status"`
+	OrderStarted      time.Time `json:"order_started"`
+	OrderDelivered    bool      `json:"order_delivered"`
+	OrderDeliveryTime time.Time `json:"order_delivery_time"`
 }
 
 type Service struct {
 	ServiceID    int32  `json:"service_id"`
 	ServiceName  string `json:"service_name"`
 	ServicePrice int64  `json:"service_price"`
+	ServiceImage string `json:"service_image"`
 }
 
 type User struct {

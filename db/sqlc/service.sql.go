@@ -12,21 +12,28 @@ import (
 const createService = `-- name: CreateService :one
 INSERT INTO services (
   service_name,
-  service_price 
+  service_price,
+  service_image 
 ) VALUES (
-  $1, $2
-) RETURNING service_id, service_name, service_price
+  $1, $2, $3
+) RETURNING service_id, service_name, service_price, service_image
 `
 
 type CreateServiceParams struct {
 	ServiceName  string `json:"service_name"`
 	ServicePrice int64  `json:"service_price"`
+	ServiceImage string `json:"service_image"`
 }
 
 func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (Service, error) {
-	row := q.db.QueryRowContext(ctx, createService, arg.ServiceName, arg.ServicePrice)
+	row := q.db.QueryRowContext(ctx, createService, arg.ServiceName, arg.ServicePrice, arg.ServiceImage)
 	var i Service
-	err := row.Scan(&i.ServiceID, &i.ServiceName, &i.ServicePrice)
+	err := row.Scan(
+		&i.ServiceID,
+		&i.ServiceName,
+		&i.ServicePrice,
+		&i.ServiceImage,
+	)
 	return i, err
 }
 
@@ -40,19 +47,24 @@ func (q *Queries) DeleteService(ctx context.Context, serviceID int32) error {
 }
 
 const getService = `-- name: GetService :one
-SELECT service_id, service_name, service_price FROM services
+SELECT service_id, service_name, service_price, service_image FROM services
 WHERE service_id = $1 LIMIT 1
 `
 
 func (q *Queries) GetService(ctx context.Context, serviceID int32) (Service, error) {
 	row := q.db.QueryRowContext(ctx, getService, serviceID)
 	var i Service
-	err := row.Scan(&i.ServiceID, &i.ServiceName, &i.ServicePrice)
+	err := row.Scan(
+		&i.ServiceID,
+		&i.ServiceName,
+		&i.ServicePrice,
+		&i.ServiceImage,
+	)
 	return i, err
 }
 
 const listAllServices = `-- name: ListAllServices :many
-SELECT service_id, service_name, service_price FROM services
+SELECT service_id, service_name, service_price, service_image FROM services
 ORDER BY service_id
 `
 
@@ -65,7 +77,12 @@ func (q *Queries) ListAllServices(ctx context.Context) ([]Service, error) {
 	items := []Service{}
 	for rows.Next() {
 		var i Service
-		if err := rows.Scan(&i.ServiceID, &i.ServiceName, &i.ServicePrice); err != nil {
+		if err := rows.Scan(
+			&i.ServiceID,
+			&i.ServiceName,
+			&i.ServicePrice,
+			&i.ServiceImage,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -80,7 +97,7 @@ func (q *Queries) ListAllServices(ctx context.Context) ([]Service, error) {
 }
 
 const listLimitedServices = `-- name: ListLimitedServices :many
-SELECT service_id, service_name, service_price FROM services
+SELECT service_id, service_name, service_price, service_image FROM services
 ORDER BY service_id
 LIMIT $1
 OFFSET $2
@@ -100,7 +117,12 @@ func (q *Queries) ListLimitedServices(ctx context.Context, arg ListLimitedServic
 	items := []Service{}
 	for rows.Next() {
 		var i Service
-		if err := rows.Scan(&i.ServiceID, &i.ServiceName, &i.ServicePrice); err != nil {
+		if err := rows.Scan(
+			&i.ServiceID,
+			&i.ServiceName,
+			&i.ServicePrice,
+			&i.ServiceImage,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -117,20 +139,32 @@ func (q *Queries) ListLimitedServices(ctx context.Context, arg ListLimitedServic
 const updateService = `-- name: UpdateService :one
 UPDATE services 
 SET service_name = $2,
-service_price = $3
+service_price = $3,
+service_image = $4
 WHERE service_id = $1
-RETURNING service_id, service_name, service_price
+RETURNING service_id, service_name, service_price, service_image
 `
 
 type UpdateServiceParams struct {
 	ServiceID    int32  `json:"service_id"`
 	ServiceName  string `json:"service_name"`
 	ServicePrice int64  `json:"service_price"`
+	ServiceImage string `json:"service_image"`
 }
 
 func (q *Queries) UpdateService(ctx context.Context, arg UpdateServiceParams) (Service, error) {
-	row := q.db.QueryRowContext(ctx, updateService, arg.ServiceID, arg.ServiceName, arg.ServicePrice)
+	row := q.db.QueryRowContext(ctx, updateService,
+		arg.ServiceID,
+		arg.ServiceName,
+		arg.ServicePrice,
+		arg.ServiceImage,
+	)
 	var i Service
-	err := row.Scan(&i.ServiceID, &i.ServiceName, &i.ServicePrice)
+	err := row.Scan(
+		&i.ServiceID,
+		&i.ServiceName,
+		&i.ServicePrice,
+		&i.ServiceImage,
+	)
 	return i, err
 }
