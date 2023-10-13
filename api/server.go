@@ -7,6 +7,8 @@ import (
 	db "github.com/nexpictora-pvt-ltd/cnx-backend/db/sqlc"
 	"github.com/nexpictora-pvt-ltd/cnx-backend/token"
 	"github.com/nexpictora-pvt-ltd/cnx-backend/util"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server struct {
@@ -38,6 +40,8 @@ func NewServer(config util.Config, store *db.Store) (*Server, error) {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
+	// Swagger Documentation
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// Anyone can use or create user or login routes
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)

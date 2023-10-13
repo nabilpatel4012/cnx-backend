@@ -10,6 +10,18 @@ import (
 	"github.com/nexpictora-pvt-ltd/cnx-backend/util"
 )
 
+// @title           Cnx-Backend API
+// @version         1.0
+// @description     This is a backend API for CTT_Back the Applicaation with integrated CRM + Ordering System.
+// @termsOfService  http://swagger.io/terms/
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	config, err := util.LoadConfig(".")
 	if err != nil {
