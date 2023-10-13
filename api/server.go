@@ -50,18 +50,26 @@ func (server *Server) setupRouter() {
 	authRoutes := router.Group("/").Use(authMiddleWare(server.tokenMaker))
 	// These Routes should be protected as not everyone should have access to it
 	authRoutes.GET("/users/:user_id", server.getUser)
-	authRoutes.GET("/users", server.listUser)
+	router.GET("/users", server.listUser)
 
-	authRoutes.POST("/services", server.createService)
+	// Admin can Create/Add service
+	router.POST("/services", server.createService)
+
+	// User Endpoints
 	authRoutes.GET("/services/:service_id", server.getService)
-	authRoutes.GET("/services", server.listServices)
-	authRoutes.PUT("/services/:service_id", server.updateService)
-	authRoutes.DELETE("/services/:service_id", server.deleteService)
+	authRoutes.GET("/services/all", server.listServices)
+
+	//Admin Endpoints
+	router.GET("/services/preview", server.listServices)
+	router.GET("/services", server.listLimitedServices)
+	router.PUT("/services/:service_id", server.updateService)
+	router.DELETE("/services/:service_id", server.deleteService)
 
 	authRoutes.POST("/orders", server.createOrder)
 	authRoutes.PUT("/orders", server.updateOrderStatus)
 	authRoutes.PUT("/orders/update", server.updateOrderDelivered)
 	authRoutes.GET("/orders/:order_id", server.getOrder)
+	authRoutes.GET("/orders", server.listOrders)
 
 	server.router = router
 }

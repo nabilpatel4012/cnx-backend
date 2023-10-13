@@ -97,7 +97,7 @@ func (q *Queries) GetOrder(ctx context.Context, orderID int64) ([]Order, error) 
 
 const listOrders = `-- name: ListOrders :many
 SELECT id, order_id, user_id, service_ids, order_status, order_started, order_delivered, order_delivery_time FROM orders
-ORDER BY order_id
+ORDER BY id DESC
 LIMIT $1
 OFFSET $2
 `

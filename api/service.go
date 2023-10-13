@@ -62,7 +62,7 @@ type listServicesRequest struct {
 	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
-func (server *Server) listServices(ctx *gin.Context) {
+func (server *Server) listLimitedServices(ctx *gin.Context) {
 	var req listServicesRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -125,4 +125,13 @@ func (server *Server) deleteService(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, "Service Deleted Successfully")
+}
+
+func (server *Server) listServices(ctx *gin.Context) {
+	service, err := server.store.ListAllServices(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, service)
 }

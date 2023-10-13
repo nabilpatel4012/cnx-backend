@@ -14,7 +14,7 @@ WHERE order_id = $1;
 
 -- name: ListOrders :many
 SELECT * FROM orders
-ORDER BY order_id
+ORDER BY id DESC
 LIMIT $1
 OFFSET $2;
 
