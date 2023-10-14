@@ -46,6 +46,8 @@ func (server *Server) setupRouter() {
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 
+	//Here the endpoint is used to renew access token for user session
+	router.POST("/tokens/renew_access", server.renewAccessToken)
 	// Here we are grouping all the routes and making them protected
 	authRoutes := router.Group("/").Use(authMiddleWare(server.tokenMaker))
 	// These Routes should be protected as not everyone should have access to it
