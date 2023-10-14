@@ -6,6 +6,8 @@ package db
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Order struct {
@@ -24,6 +26,17 @@ type Service struct {
 	ServiceName  string `json:"service_name"`
 	ServicePrice int64  `json:"service_price"`
 	ServiceImage string `json:"service_image"`
+}
+
+type Session struct {
+	ID           uuid.UUID `json:"id"`
+	Email        string    `json:"email"`
+	RefreshToken string    `json:"refresh_token"`
+	UserAgent    string    `json:"user_agent"`
+	CleintIp     string    `json:"cleint_ip"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type User struct {
