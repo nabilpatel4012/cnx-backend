@@ -11,16 +11,13 @@ FROM alpine:3.18
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=builder /app/migrate ./
-COPY app.env .
-COPY wait-for.sh .
-COPY start.sh .
-COPY db/migration ./migration
+COPY --from=builder /app/app.env .
+COPY --from=builder /app/wait-for.sh .
+COPY --from=builder /app/start.sh .
+COPY --from=builder /app/db/migration ./migration
 
-# Run Stage
-FROM alpine:3.18
-WORKDIR /app
-COPY --from=builder /app/main .
-COPY app.env .
+RUN chmod +x /app/wait-for.sh
+RUN chmod +x /app/start.sh
 
 EXPOSE 8080
 CMD [ "/app/main" ]
