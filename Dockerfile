@@ -11,7 +11,7 @@ FROM alpine:3.18
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=builder /app/migrate ./
-COPY --from=builder /app/app.env .
+# COPY --from=builder /app/app.env .
 COPY --from=builder /app/wait-for.sh .
 COPY --from=builder /app/start.sh .
 COPY --from=builder /app/db/migration ./migration
