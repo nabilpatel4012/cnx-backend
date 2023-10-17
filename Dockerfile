@@ -1,10 +1,8 @@
 # Build Stage
-ARG APP_NAME=main
 FROM golang:1.21-alpine3.18 AS builder
-ARG APP_NAME
 WORKDIR /app
 COPY . .
-RUN go build -o /$APP_NAME
+RUN go build -o main main.go
 RUN apk add curl
 RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz | tar xvz
 
